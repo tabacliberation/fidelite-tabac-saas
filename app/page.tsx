@@ -553,7 +553,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-block bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm px-4 py-1 rounded-full mb-6">
-              + de 0 buralistes nous font confiance
+              + de 1 500 buralistes nous font confiance
             </div>
             <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
               Fidélisez vos clients avec une application

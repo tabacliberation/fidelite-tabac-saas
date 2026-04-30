@@ -22,7 +22,7 @@ body {
   background: var(--bg);
   color: #e2e8f0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  overscroll-behavior: none;
+  overscroll-behavior-x: none;
   /* Scroll fluide sur iOS */
   -webkit-overflow-scrolling: touch;
   max-width: 100vw;
