@@ -526,8 +526,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden">
 
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 sticky top-0 bg-[#0a0a0f]/95 backdrop-blur z-50">
-        <div className="text-xl font-bold text-cyan-400">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-white/10 sticky top-0 bg-[#0a0a0f]/95 backdrop-blur z-50">
+        <div className="text-base font-bold text-cyan-400 shrink-0">
           Fidélité<span className="text-white">Tabac</span>
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-gray-400">
@@ -535,15 +535,15 @@ export default function LandingPage() {
           <a href="#tarifs" className="hover:text-white transition-colors">Tarifs</a>
           <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
         </nav>
-        <div className="flex items-center gap-3">
-          <Link href="/demo" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">
-            Voir la démo
+        <div className="flex items-center gap-2 ml-4">
+          <Link href="/demo" className="text-xs text-gray-400 hover:text-white transition-colors hidden sm:block">
+            Démo
           </Link>
-          <Link href="/connexion" className="text-xs text-gray-400 hover:text-white border border-white/20 hover:border-white/40 px-3 py-1.5 rounded-full transition-colors">
-            Se connecter
+          <Link href="/connexion" className="text-xs text-gray-400 hover:text-white border border-white/20 hover:border-white/40 px-2.5 py-1.5 rounded-full transition-colors whitespace-nowrap">
+            Connexion
           </Link>
-          <Link href="/inscription" className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-3 py-1.5 rounded-full text-xs transition-colors">
-            Démarrer gratuitement
+          <Link href="/inscription" className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-2.5 py-1.5 rounded-full text-xs transition-colors whitespace-nowrap">
+            Démarrer
           </Link>
         </div>
       </header>
