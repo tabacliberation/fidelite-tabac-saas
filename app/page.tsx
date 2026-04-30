@@ -539,7 +539,7 @@ export default function LandingPage() {
           <Link href="/demo" className="text-sm text-gray-400 hover:text-white transition-colors hidden sm:block">
             Voir la démo
           </Link>
-          <Link href="/connexion" className="text-sm text-gray-400 hover:text-white transition-colors border border-white/20 hover:border-white/40 px-4 py-2 rounded-full transition-colors hidden sm:block">
+          <Link href="/connexion" className="text-sm text-gray-400 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-full transition-colors">
             Se connecter
           </Link>
           <Link href="/inscription" className="bg-cyan-500 hover:bg-cyan-400 text-black font-bold px-5 py-2 rounded-full text-sm transition-colors">
