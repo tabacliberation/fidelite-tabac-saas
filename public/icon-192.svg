@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="36" fill="#06061a"/>
+  <polygon points="96,20 172,96 96,172 20,96" fill="#cc0000"/>
+  <polygon points="96,30 162,96 96,162 30,96" fill="#e01111"/>
+  <polygon points="96,20 172,96 96,172 20,96" fill="none" stroke="#fbbf24" stroke-width="2.5" opacity="0.7"/>
+  <text x="96" y="91"
+    text-anchor="middle"
+    fill="white"
+    font-family="Arial Black, sans-serif"
+    font-weight="900"
+    font-size="33"
+    letter-spacing="1.5">TABAC</text>
+  <text x="96" y="112"
+    text-anchor="middle"
+    fill="rgba(255,220,100,0.9)"
+    font-family="Arial, sans-serif"
+    font-weight="700"
+    font-size="13"
+    letter-spacing="4">FRANCE</text>
+</svg>

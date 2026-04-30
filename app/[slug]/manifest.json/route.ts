@@ -1,0 +1,34 @@
+import { getShopBySlug } from '@/lib/getShop'
+import { NextResponse } from 'next/server'
+
+export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const shop = await getShopBySlug(slug)
+  const name = shop?.name ?? 'TabacFrance'
+
+  return NextResponse.json({
+    name: `${name} — Fidélité`,
+    short_name: name,
+    description: `Programme de fidélité de ${name}`,
+    start_url: `/${slug}`,
+    scope: `/${slug}`,
+    display: 'standalone',
+    background_color: '#06061a',
+    theme_color: '#cc0000',
+    orientation: 'portrait',
+    icons: [
+      {
+        src: '/icon-192.svg',
+        sizes: '192x192',
+        type: 'image/svg+xml',
+        purpose: 'any maskable',
+      },
+      {
+        src: '/icon.svg',
+        sizes: '512x512',
+        type: 'image/svg+xml',
+        purpose: 'any maskable',
+      },
+    ],
+  })
+}
