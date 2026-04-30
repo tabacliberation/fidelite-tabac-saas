@@ -2,8 +2,9 @@
 
 import { usePathname } from 'next/navigation'
 import BottomNav from './BottomNav'
+import PWAInstallBanner from './PWAInstallBanner'
 
-export default function ShopClientLayout({ slug, children }: { slug: string; children: React.ReactNode }) {
+export default function ShopClientLayout({ slug, shopName, children }: { slug: string; shopName: string; children: React.ReactNode }) {
   const pathname = usePathname()
   const isAdmin = pathname.includes('/admin')
 
@@ -23,6 +24,7 @@ export default function ShopClientLayout({ slug, children }: { slug: string; chi
       <div className="relative min-h-screen pb-20">
         {children}
         <BottomNav slug={slug} />
+        <PWAInstallBanner slug={slug} shopName={shopName} />
       </div>
     </div>
   )

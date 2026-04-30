@@ -50,5 +50,5 @@ export default async function ShopLayout({
     return <TrialExpiredPage slug={slug} shopName={shop.name} />
   }
 
-  return <ShopClientLayout slug={slug}>{children}</ShopClientLayout>
+  return <ShopClientLayout slug={slug} shopName={shop.name}>{children}</ShopClientLayout>
 }
