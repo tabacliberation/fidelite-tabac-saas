@@ -292,25 +292,15 @@ export default function SuperAdminPage() {
         <main className="flex-1 overflow-auto">
           {/* Topbar mobile */}
           <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-cyan-400/15">
-            <span className="text-white font-bold text-sm">Super Admin</span>
-            <div className="flex gap-1 items-center">
-              <button onClick={togglePush} disabled={pushLoading} title={pushSubscribed ? 'Notifs activées' : 'Activer les notifs'}
-                className={`p-2 rounded-lg transition-all ${pushSubscribed ? 'text-green-400 bg-green-400/10' : 'text-slate-500 hover:text-cyan-400'}`}>
-                {pushSubscribed ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-              </button>
-              <button onClick={logout} className="p-2 rounded-lg text-slate-500 hover:text-red-400">
-                <LogOut className="w-4 h-4" />
-              </button>
-              {TABS.map(({ id, icon: Icon }) => (
-                <button key={id} onClick={() => setTab(id)}
-                  className={`p-2 rounded-lg ${tab === id ? 'text-cyan-400 bg-cyan-400/10' : 'text-slate-500'}`}>
-                  <Icon className="w-4 h-4" />
-                </button>
-              ))}
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'rgba(34,211,238,0.12)', border: '1px solid rgba(34,211,238,0.4)' }}>
+                <Cigarette className="w-3.5 h-3.5" style={{ color: '#22d3ee' }} />
+              </div>
+              <span className="text-white font-bold text-sm">Super Admin</span>
             </div>
           </div>
 
-          <div className="p-6 max-w-5xl">
+          <div className="p-4 md:p-6 max-w-5xl pb-24 md:pb-6">
 
             {/* ── OVERVIEW ── */}
             {tab === 'overview' && (
@@ -558,6 +548,28 @@ export default function SuperAdminPage() {
 
           </div>
         </main>
+      </div>
+
+      {/* ── Bottom nav mobile ── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 border-t border-cyan-400/15 pb-safe" style={{ background: 'rgba(6,6,26,0.97)', backdropFilter: 'blur(12px)' }}>
+        <div className="flex items-center justify-around px-2 py-2">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button key={id} onClick={() => setTab(id)}
+              className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${tab === id ? 'text-cyan-400' : 'text-slate-500'}`}>
+              <Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium">{label}</span>
+            </button>
+          ))}
+          <button onClick={togglePush} disabled={pushLoading}
+            className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${pushSubscribed ? 'text-green-400' : 'text-slate-500'}`}>
+            {pushSubscribed ? <Bell className="w-5 h-5" /> : <BellOff className="w-5 h-5" />}
+            <span className="text-[10px] font-medium">Notifs</span>
+          </button>
+          <button onClick={logout} className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl text-slate-500 hover:text-red-400 transition-all">
+            <LogOut className="w-5 h-5" />
+            <span className="text-[10px] font-medium">Quitter</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Modal Factures ── */}
