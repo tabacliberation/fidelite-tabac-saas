@@ -91,7 +91,11 @@ export default function SuperAdminPage() {
 
   async function togglePush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      alert('Les notifications push ne sont pas supportées sur ce navigateur.')
+      alert('Les notifications push ne sont pas supportées sur ce navigateur. Utilise Chrome ou Safari 16.4+.')
+      return
+    }
+    if (!('Notification' in window)) {
+      alert('Les notifications ne sont pas disponibles sur ce navigateur.')
       return
     }
     setPushLoading(true)
@@ -110,22 +114,42 @@ export default function SuperAdminPage() {
           await sub.unsubscribe()
         }
         setPushSubscribed(false)
+        alert('Notifications désactivées.')
       } else {
         const permission = await Notification.requestPermission()
-        if (permission !== 'granted') { setPushLoading(false); return }
+        if (permission === 'denied') {
+          alert('Tu as bloqué les notifications. Va dans les paramètres de ton navigateur pour les réactiver.')
+          setPushLoading(false)
+          return
+        }
+        if (permission !== 'granted') {
+          setPushLoading(false)
+          return
+        }
+        const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+        if (!vapidKey) {
+          alert('Clé VAPID manquante — ajoute NEXT_PUBLIC_VAPID_PUBLIC_KEY dans les variables Vercel.')
+          setPushLoading(false)
+          return
+        }
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+          applicationServerKey: vapidKey,
         })
-        await fetch('/api/superadmin/push', {
+        const res = await fetch('/api/superadmin/push', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sub.toJSON()),
         })
-        setPushSubscribed(true)
+        if (res.ok) {
+          setPushSubscribed(true)
+          alert('Notifications activées ! Tu recevras une alerte à chaque inscription.')
+        } else {
+          alert('Erreur lors de l\'enregistrement. Réessaie.')
+        }
       }
-    } catch (e) {
-      console.error(e)
+    } catch (e: any) {
+      alert('Erreur : ' + (e?.message || String(e)))
     }
     setPushLoading(false)
   }
