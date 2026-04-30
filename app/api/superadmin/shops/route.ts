@@ -30,6 +30,34 @@ export async function GET() {
   return NextResponse.json({ shops })
 }
 
+export async function PATCH(req: NextRequest) {
+  if (!(await isAuth())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { shopId, action, days } = await req.json()
+  if (!shopId || !action) return NextResponse.json({ error: 'Missing params' }, { status: 400 })
+
+  if (action === 'extend_trial') {
+    const { data: shop } = await supabase.from('shops').select('trial_ends_at').eq('id', shopId).single()
+    const base = shop?.trial_ends_at ? new Date(shop.trial_ends_at) : new Date()
+    if (base < new Date()) base.setTime(Date.now())
+    base.setDate(base.getDate() + (days ?? 7))
+    await supabase.from('shops').update({ trial_ends_at: base.toISOString(), subscription_status: 'trial' }).eq('id', shopId)
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'suspend') {
+    await supabase.from('shops').update({ subscription_status: 'canceled' }).eq('id', shopId)
+    return NextResponse.json({ ok: true })
+  }
+
+  if (action === 'reactivate') {
+    await supabase.from('shops').update({ subscription_status: 'trial' }).eq('id', shopId)
+    return NextResponse.json({ ok: true })
+  }
+
+  return NextResponse.json({ error: 'Unknown action' }, { status: 400 })
+}
+
 export async function DELETE(req: NextRequest) {
   if (!(await isAuth())) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 

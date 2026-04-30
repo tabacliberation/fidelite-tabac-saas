@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import bcrypt from 'bcryptjs'
+import { sendNewShopNotification } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   const { shopName, slug, address, phone, adminEmail, adminPassword, plan } = await req.json()
@@ -54,6 +55,14 @@ export async function POST(req: NextRequest) {
     pin_code: '1234',
     shop_name: shopName,
   })
+
+  // Notif email admin
+  sendNewShopNotification({
+    name: shopName,
+    slug: shop.slug,
+    adminEmail: adminEmail,
+    plan: plan === 'flex' ? 'Flex (19,90€/mois)' : 'Engagement (14,90€/mois)',
+  }).catch(() => {})
 
   return NextResponse.json({ success: true, slug: shop.slug })
 }
