@@ -389,7 +389,7 @@ function ClientJourneyAnimation() {
                         {/* Icône app installée — mise en avant */}
                         <div className="flex flex-col items-center gap-1 relative">
                           <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-lg ring-2 ring-offset-1 ring-offset-transparent"
-                            style={{ background: 'linear-gradient(135deg, rgba(34,211,238,0.3), rgba(139,92,246,0.3))', border: '1px solid rgba(34,211,238,0.6)', boxShadow: '0 0 20px rgba(34,211,238,0.5)', ringColor: '#22d3ee' }}>
+                            style={{ background: 'linear-gradient(135deg, rgba(34,211,238,0.3), rgba(139,92,246,0.3))', border: '1px solid rgba(34,211,238,0.6)', boxShadow: '0 0 20px rgba(34,211,238,0.5)' }}>
                             🚬
                           </div>
                           {/* Badge "Nouveau" */}
