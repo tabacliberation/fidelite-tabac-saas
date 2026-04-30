@@ -1,8 +1,12 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const ADMIN_EMAIL = 'tahardjamel22@gmail.com'
 const FROM = 'TabacFrance <noreply@tabacfrance.fr>'
+
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null
+  return new Resend(process.env.RESEND_API_KEY)
+}
 
 export async function sendNewShopNotification(shop: {
   name: string
@@ -10,7 +14,8 @@ export async function sendNewShopNotification(shop: {
   adminEmail: string
   plan: string
 }) {
-  if (!process.env.RESEND_API_KEY) return
+  const resend = getResend()
+  if (!resend) return
   await resend.emails.send({
     from: FROM,
     to: ADMIN_EMAIL,
@@ -34,7 +39,8 @@ export async function sendNewShopNotification(shop: {
 }
 
 export async function sendEmailToBuraliste(to: string, subject: string, message: string) {
-  if (!process.env.RESEND_API_KEY) return
+  const resend = getResend()
+  if (!resend) return
   await resend.emails.send({
     from: FROM,
     to,
