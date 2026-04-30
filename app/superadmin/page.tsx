@@ -293,7 +293,14 @@ export default function SuperAdminPage() {
           {/* Topbar mobile */}
           <div className="md:hidden flex items-center justify-between px-4 py-3 border-b border-cyan-400/15">
             <span className="text-white font-bold text-sm">Super Admin</span>
-            <div className="flex gap-1">
+            <div className="flex gap-1 items-center">
+              <button onClick={togglePush} disabled={pushLoading} title={pushSubscribed ? 'Notifs activées' : 'Activer les notifs'}
+                className={`p-2 rounded-lg transition-all ${pushSubscribed ? 'text-green-400 bg-green-400/10' : 'text-slate-500 hover:text-cyan-400'}`}>
+                {pushSubscribed ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+              </button>
+              <button onClick={logout} className="p-2 rounded-lg text-slate-500 hover:text-red-400">
+                <LogOut className="w-4 h-4" />
+              </button>
               {TABS.map(({ id, icon: Icon }) => (
                 <button key={id} onClick={() => setTab(id)}
                   className={`p-2 rounded-lg ${tab === id ? 'text-cyan-400 bg-cyan-400/10' : 'text-slate-500'}`}>
