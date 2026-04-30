@@ -436,10 +436,10 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
           >
             <p className="text-xs font-black uppercase tracking-widest mb-2" style={{ color: '#f59e0b' }}>Vous êtes buraliste ?</p>
             <p className="text-2xl font-black text-white mb-1">
-              À partir de <span style={{ color: '#f59e0b' }}>49€</span>
+              À partir de <span style={{ color: '#f59e0b' }}>19,90€</span>
               <span className="text-sm font-normal text-slate-400">/mois</span>
             </p>
-            <p className="text-xs mb-4" style={{ color: '#64748b' }}>Configuration incluse · Sans engagement · Support inclus</p>
+            <p className="text-xs mb-4" style={{ color: '#64748b' }}>14 jours d&apos;essai gratuit · Sans engagement · Support inclus</p>
             <a href="/" target="_blank" rel="noreferrer"
               className="inline-flex items-center gap-2 font-black py-3 px-6 rounded-xl text-sm transition-all"
               style={{ background: 'rgba(245,158,11,0.2)', color: '#f59e0b', border: '1px solid rgba(245,158,11,0.5)', boxShadow: '0 0 16px rgba(245,158,11,0.15)' }}
