@@ -6,7 +6,7 @@ import {
   Users, TrendingUp, CreditCard, AlertTriangle,
   Search, ExternalLink, FileText, X, LogOut,
   ChevronRight, Cigarette, BarChart3, Mail,
-  CalendarPlus, Ban, RefreshCw, MoreVertical
+  CalendarPlus, Ban, RefreshCw, MoreVertical, Bell, BellOff
 } from 'lucide-react'
 
 interface Shop {
@@ -73,8 +73,62 @@ export default function SuperAdminPage() {
   // Actions
   const [actionLoading, setActionLoading] = useState(false)
   const [extendDays, setExtendDays] = useState(7)
+  const [pushSubscribed, setPushSubscribed] = useState(false)
+  const [pushLoading, setPushLoading] = useState(false)
 
-  useEffect(() => { fetchShops() }, [])
+  useEffect(() => {
+    fetchShops()
+    checkPushStatus()
+  }, [])
+
+  async function checkPushStatus() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    const reg = await navigator.serviceWorker.getRegistration()
+    if (!reg) return
+    const sub = await reg.pushManager.getSubscription()
+    setPushSubscribed(!!sub)
+  }
+
+  async function togglePush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      alert('Les notifications push ne sont pas supportées sur ce navigateur.')
+      return
+    }
+    setPushLoading(true)
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js')
+      await navigator.serviceWorker.ready
+
+      if (pushSubscribed) {
+        const sub = await reg.pushManager.getSubscription()
+        if (sub) {
+          await fetch('/api/superadmin/push', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endpoint: sub.endpoint }),
+          })
+          await sub.unsubscribe()
+        }
+        setPushSubscribed(false)
+      } else {
+        const permission = await Notification.requestPermission()
+        if (permission !== 'granted') { setPushLoading(false); return }
+        const sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        })
+        await fetch('/api/superadmin/push', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(sub.toJSON()),
+        })
+        setPushSubscribed(true)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    setPushLoading(false)
+  }
 
   async function fetchShops() {
     const res = await fetch('/api/superadmin/shops')
@@ -217,7 +271,16 @@ export default function SuperAdminPage() {
             </div>
           )}
 
-          <div className="p-4 border-t border-cyan-400/15">
+          <div className="p-4 border-t border-cyan-400/15 space-y-2">
+            <button onClick={togglePush} disabled={pushLoading}
+              className={`w-full flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all disabled:opacity-50 ${
+                pushSubscribed
+                  ? 'text-green-400 bg-green-400/10 border border-green-400/25'
+                  : 'text-slate-400 hover:text-cyan-400 hover:bg-cyan-400/5'
+              }`}>
+              {pushSubscribed ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+              {pushLoading ? '...' : pushSubscribed ? 'Notifs activées' : 'Activer les notifs'}
+            </button>
             <button onClick={logout}
               className="w-full flex items-center gap-2 px-4 py-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-400/5 text-sm transition-all">
               <LogOut className="w-4 h-4" />Déconnexion

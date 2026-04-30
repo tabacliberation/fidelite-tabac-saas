@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 import bcrypt from 'bcryptjs'
 import { sendNewShopNotification } from '@/lib/email'
+import { sendAdminPush } from '@/lib/push'
 
 export async function POST(req: NextRequest) {
   const { shopName, slug, address, phone, adminEmail, adminPassword, plan } = await req.json()
@@ -56,7 +57,12 @@ export async function POST(req: NextRequest) {
     shop_name: shopName,
   })
 
-  // Notif email admin
+  // Notif push + email admin
+  sendAdminPush(
+    '🆕 Nouvelle inscription',
+    `${shopName} vient de s'inscrire sur TabacFrance`
+  ).catch(() => {})
+
   sendNewShopNotification({
     name: shopName,
     slug: shop.slug,
