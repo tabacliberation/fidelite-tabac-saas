@@ -19,6 +19,7 @@ interface Shop {
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
   created_at: string
+  plan: string | null
 }
 
 interface Invoice {
@@ -43,8 +44,8 @@ const TABS = [
   { id: 'revenue',  label: 'Revenus',          icon: TrendingUp },
 ]
 
-const FLEX_PRICE = 19.90
-const ENGAGEMENT_PRICE = 14.90
+const ENGAGEMENT_PRICE = 19.90
+const FLEX_PRICE = 29.90
 
 export default function SuperAdminPage() {
   const router = useRouter()
@@ -138,14 +139,22 @@ export default function SuperAdminPage() {
     router.push('/superadmin/login')
   }
 
-  const stats = useMemo(() => ({
-    total:    shops.length,
-    active:   shops.filter(s => s.subscription_status === 'active').length,
-    trial:    shops.filter(s => s.subscription_status === 'trial').length,
-    past_due: shops.filter(s => s.subscription_status === 'past_due').length,
-    canceled: shops.filter(s => s.subscription_status === 'canceled').length,
-    mrr:      shops.filter(s => s.subscription_status === 'active').length * FLEX_PRICE,
-  }), [shops])
+  const stats = useMemo(() => {
+    const active = shops.filter(s => s.subscription_status === 'active')
+    const mrr = active.reduce((sum, s) => sum + (s.plan === 'engagement' ? ENGAGEMENT_PRICE : FLEX_PRICE), 0)
+    const flexCount = active.filter(s => s.plan !== 'engagement').length
+    const engagementCount = active.filter(s => s.plan === 'engagement').length
+    return {
+      total:           shops.length,
+      active:          active.length,
+      trial:           shops.filter(s => s.subscription_status === 'trial').length,
+      past_due:        shops.filter(s => s.subscription_status === 'past_due').length,
+      canceled:        shops.filter(s => s.subscription_status === 'canceled').length,
+      mrr,
+      flexCount,
+      engagementCount,
+    }
+  }, [shops])
 
   const filtered = useMemo(() => shops.filter(s => {
     const q = search.toLowerCase()
@@ -433,9 +442,9 @@ export default function SuperAdminPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
-                    { label: 'MRR estimé',  value: `${stats.mrr.toFixed(2)} €`,                               color: '#22d3ee', sub: `${stats.active} abonné(s) × ${FLEX_PRICE} €` },
-                    { label: 'ARR estimé',  value: `${(stats.mrr * 12).toFixed(0)} €`,                        color: '#d946ef', sub: 'Revenu annuel récurrent' },
-                    { label: 'Potentiel',   value: `${((stats.active + stats.trial) * FLEX_PRICE).toFixed(0)} €`, color: '#4ade80', sub: 'Si tous les essais convertissent' },
+                    { label: 'MRR estimé',  value: `${stats.mrr.toFixed(2)} €`,                                                              color: '#22d3ee', sub: `${stats.flexCount} Flex + ${stats.engagementCount} Engagement` },
+                    { label: 'ARR estimé',  value: `${(stats.mrr * 12).toFixed(0)} €`,                                                        color: '#d946ef', sub: 'Revenu annuel récurrent' },
+                    { label: 'Potentiel',   value: `${(stats.mrr + stats.trial * ENGAGEMENT_PRICE).toFixed(0)} €`,                            color: '#4ade80', sub: 'Si tous les essais convertissent (Engagement)' },
                   ].map(k => (
                     <div key={k.label} className="neon-card rounded-2xl p-5">
                       <div className="text-slate-500 text-xs mb-2">{k.label}</div>
@@ -448,8 +457,8 @@ export default function SuperAdminPage() {
                   <h3 className="text-white font-semibold mb-4">Détail par plan</h3>
                   <div className="space-y-3">
                     {[
-                      { plan: 'Flex (19,90 €/mois)',       count: stats.active, mrr: stats.active * FLEX_PRICE,       color: '#22d3ee' },
-                      { plan: 'Engagement (14,90 €/mois)', count: 0,            mrr: 0,                                color: '#d946ef' },
+                      { plan: 'Flex (29,90 €/mois)',        count: stats.flexCount,       mrr: stats.flexCount * FLEX_PRICE,             color: '#22d3ee' },
+                      { plan: 'Engagement (19,90 €/mois)',  count: stats.engagementCount, mrr: stats.engagementCount * ENGAGEMENT_PRICE,  color: '#d946ef' },
                     ].map(p => (
                       <div key={p.plan} className="flex items-center justify-between py-3 border-b border-slate-800/50 last:border-0">
                         <div className="flex items-center gap-3">

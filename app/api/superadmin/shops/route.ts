@@ -23,7 +23,7 @@ export async function GET() {
 
   const { data: shops, error } = await supabase
     .from('shops')
-    .select('id, name, slug, admin_email, subscription_status, trial_ends_at, stripe_customer_id, stripe_subscription_id, created_at')
+    .select('id, name, slug, admin_email, subscription_status, trial_ends_at, stripe_customer_id, stripe_subscription_id, created_at, plan')
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
