@@ -799,7 +799,7 @@ export default function LandingPage() {
             <Link href="/mentions-legales" className="hover:text-white transition-colors">Mentions légales</Link>
             <Link href="/cgv" className="hover:text-white transition-colors">CGV</Link>
             <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
-            <a href="mailto:tahardjamel22@gmail.com" className="hover:text-white transition-colors">tahardjamel22@gmail.com</a>
+            <a href="mailto:contact@tabacfrance.fr" className="hover:text-white transition-colors">contact@tabacfrance.fr</a>
           </div>
           <p className="text-xs text-gray-700 mt-5">© {new Date().getFullYear()} Ring&apos;s Shop — Tous droits réservés</p>
         </div>
