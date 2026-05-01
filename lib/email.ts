@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 
 const ADMIN_EMAIL = 'tahardjamel22@gmail.com'
-const FROM = 'TabacFrance <noreply@tabacfrance.fr>'
+const FROM = 'TabacFrance <contact@tabacfrance.fr>'
 
 function getResend() {
   if (!process.env.RESEND_API_KEY) return null
