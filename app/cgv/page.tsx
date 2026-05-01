@@ -90,8 +90,8 @@ export default function CGVPage() {
           <h2 className="text-cyan-400 font-black text-base sm:text-lg mb-3 uppercase tracking-widest">8. Contact</h2>
           <p>
             Pour toute question relative aux présentes CGV :{' '}
-            <a href="mailto:tahardjamel22@gmail.com" className="text-cyan-400 underline hover:text-cyan-300">
-              tahardjamel22@gmail.com
+            <a href="mailto:contact@tabacfrance.fr" className="text-cyan-400 underline hover:text-cyan-300">
+              contact@tabacfrance.fr
             </a>
           </p>
         </section>

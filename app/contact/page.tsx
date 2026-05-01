@@ -14,7 +14,7 @@ export default function ContactPage() {
       `Nom : ${form.name}\nEmail : ${form.email}\n\n${form.message}`
     )
     const subject = encodeURIComponent(form.subject || 'Contact TabacFrance')
-    window.location.href = `mailto:tahardjamel22@gmail.com?subject=${subject}&body=${body}`
+    window.location.href = `mailto:contact@tabacfrance.fr?subject=${subject}&body=${body}`
     setSent(true)
   }
 
@@ -36,7 +36,7 @@ export default function ContactPage() {
 
         {/* Infos directes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <a href="mailto:tahardjamel22@gmail.com"
+          <a href="mailto:contact@tabacfrance.fr"
             className="flex items-center gap-3 rounded-2xl p-4 border border-cyan-500/25 bg-cyan-500/5 hover:bg-cyan-500/10 transition-colors group"
           >
             <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -46,7 +46,7 @@ export default function ContactPage() {
             <div>
               <p className="text-xs text-gray-500 font-medium">Email</p>
               <p className="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">
-                tahardjamel22@gmail.com
+                contact@tabacfrance.fr
               </p>
             </div>
           </a>

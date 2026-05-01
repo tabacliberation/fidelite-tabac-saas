@@ -20,8 +20,8 @@ export default function MentionsLegalesPage() {
             <p><span className="text-white font-semibold">SIRET :</span> 793 550 989 00024</p>
             <p><span className="text-white font-semibold">Responsable de la publication :</span> Tahar Djamel</p>
             <p><span className="text-white font-semibold">Email :</span>{' '}
-              <a href="mailto:tahardjamel22@gmail.com" className="text-cyan-400 underline hover:text-cyan-300">
-                tahardjamel22@gmail.com
+              <a href="mailto:contact@tabacfrance.fr" className="text-cyan-400 underline hover:text-cyan-300">
+                contact@tabacfrance.fr
               </a>
             </p>
           </div>
@@ -57,8 +57,8 @@ export default function MentionsLegalesPage() {
           </p>
           <p className="mt-2">
             Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d&apos;un droit d&apos;accès, de rectification et de suppression de vos données. Pour exercer ce droit, contactez-nous à{' '}
-            <a href="mailto:tahardjamel22@gmail.com" className="text-cyan-400 underline hover:text-cyan-300">
-              tahardjamel22@gmail.com
+            <a href="mailto:contact@tabacfrance.fr" className="text-cyan-400 underline hover:text-cyan-300">
+              contact@tabacfrance.fr
             </a>.
           </p>
         </section>
