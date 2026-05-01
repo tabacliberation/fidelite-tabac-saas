@@ -134,7 +134,7 @@ export default function QRCodePage() {
               🖨️ Imprimer
             </button>
             <button onClick={handleDownload} disabled={saving}
-              className="flex-1 py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-60"
+              className="flex-1 py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-60 hidden md:block"
               style={{ background: 'rgba(217,70,239,0.1)', color: '#d946ef', border: '1px solid rgba(217,70,239,0.3)' }}
             >
               {saving ? '⏳...' : '🖼️ Télécharger'}
@@ -153,8 +153,16 @@ export default function QRCodePage() {
         </div>
       </div>
 
+      {/* Message mobile */}
+      <div className="no-print md:hidden px-5 pb-6">
+        <div className="rounded-2xl p-4 text-sm text-center" style={{ background: 'rgba(34,211,238,0.05)', border: '1px solid rgba(34,211,238,0.15)', color: '#475569' }}>
+          <p className="text-white font-bold mb-1">🖨️ Affiche A4</p>
+          <p className="text-xs">Ouvrez cette page sur un ordinateur pour prévisualiser et imprimer l&apos;affiche complète avec vos offres.</p>
+        </div>
+      </div>
+
       {/* Printable A4 poster */}
-      <div id="poster" className="poster mx-auto"
+      <div id="poster" className="poster mx-auto hidden md:flex"
         style={{
           width: '210mm', minHeight: '297mm', background: '#06061a',
           fontFamily: "'Inter', sans-serif", position: 'relative', overflow: 'hidden',
