@@ -40,6 +40,19 @@ export default function QRCodePage() {
   const [offers, setOffers] = useState<Offer[]>([])
   const [simpleOffers, setSimpleOffers] = useState<SimpleOffer[]>([])
   const [saving, setSaving] = useState(false)
+  const [posterScale, setPosterScale] = useState(1)
+
+  useEffect(() => {
+    function updateScale() {
+      const vw = window.innerWidth - 32 // padding
+      const posterPx = 210 * 3.7795 // 210mm en px à 96dpi ≈ 794px
+      if (vw < posterPx) setPosterScale(vw / posterPx)
+      else setPosterScale(1)
+    }
+    updateScale()
+    window.addEventListener('resize', updateScale)
+    return () => window.removeEventListener('resize', updateScale)
+  }, [])
 
   useEffect(() => {
     if (!localStorage.getItem(`admin_${slug}`)) { router.push(`/${slug}/admin`); return }
@@ -134,7 +147,7 @@ export default function QRCodePage() {
               🖨️ Imprimer
             </button>
             <button onClick={handleDownload} disabled={saving}
-              className="flex-1 py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-60 hidden md:block"
+              className="flex-1 py-3 rounded-xl font-bold text-sm transition-all disabled:opacity-60"
               style={{ background: 'rgba(217,70,239,0.1)', color: '#d946ef', border: '1px solid rgba(217,70,239,0.3)' }}
             >
               {saving ? '⏳...' : '🖼️ Télécharger'}
@@ -153,16 +166,14 @@ export default function QRCodePage() {
         </div>
       </div>
 
-      {/* Message mobile */}
-      <div className="no-print md:hidden px-5 pb-6">
-        <div className="rounded-2xl p-4 text-sm text-center" style={{ background: 'rgba(34,211,238,0.05)', border: '1px solid rgba(34,211,238,0.15)', color: '#475569' }}>
-          <p className="text-white font-bold mb-1">🖨️ Affiche A4</p>
-          <p className="text-xs">Ouvrez cette page sur un ordinateur pour prévisualiser et imprimer l&apos;affiche complète avec vos offres.</p>
-        </div>
-      </div>
+      {/* Aperçu affiche avec scale responsive */}
+      <div className="no-print px-4 pb-8">
+        <p className="text-xs text-center mb-3" style={{ color: '#475569' }}>Aperçu de l&apos;affiche</p>
+        <div style={{ width: '100%', overflow: 'hidden' }}>
+          <div style={{ transform: `scale(${posterScale})`, transformOrigin: 'top left', width: `${100 / posterScale}%` }}>
 
       {/* Printable A4 poster */}
-      <div id="poster" className="poster mx-auto hidden md:flex"
+      <div id="poster" className="poster mx-auto"
         style={{
           width: '210mm', minHeight: '297mm', background: '#06061a',
           fontFamily: "'Inter', sans-serif", position: 'relative', overflow: 'hidden',
@@ -299,6 +310,10 @@ export default function QRCodePage() {
           <div style={{ fontSize: '2.5mm', color: '#1e293b' }}>Ce programme de fidélité est réservé aux majeurs</div>
         </div>
       </div>
+
+          </div>{/* end scale inner */}
+        </div>{/* end scale outer */}
+      </div>{/* end aperçu */}
     </>
   )
 }
