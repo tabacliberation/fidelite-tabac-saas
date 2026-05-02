@@ -45,7 +45,11 @@ export default function OfferDetailPage() {
     setIsLoggedIn(!!localStorage.getItem(`profile_${slug}`))
 
     fetch(`/api/${slug}/offers/${offerId}`)
-      .then(r => r.json())
+      .then(async r => {
+        const text = await r.text()
+        if (!text) throw new Error('Réponse vide')
+        return JSON.parse(text)
+      })
       .then(data => {
         if (data?.id) {
           setOffer(data)
