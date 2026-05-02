@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
 
     const priceId = plan === 'flex' ? flexId : plan === 'engagement' ? engId : null
     if (!priceId) {
-      return NextResponse.json({ error: `Plan invalide ou prix manquant: "${plan}"` }, { status: 400 })
+      return NextResponse.json({ error: `Plan invalide ou prix manquant: "${plan}" (flex=${flexId}, eng=${engId})` }, { status: 400 })
     }
 
     const stripe = new Stripe(secretKey)
@@ -44,6 +44,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     return NextResponse.json({ url: session.url })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    const flexId = process.env.STRIPE_PRICE_FLEX_ID ?? 'MANQUANT'
+    const engId = process.env.STRIPE_PRICE_ENGAGEMENT_ID ?? 'MANQUANT'
+    return NextResponse.json({ error: msg, debug: { flex: flexId, engagement: engId } }, { status: 500 })
   }
 }
