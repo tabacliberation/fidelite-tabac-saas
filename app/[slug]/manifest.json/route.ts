@@ -10,11 +10,11 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
     name: `${name} — Fidélité`,
     short_name: name,
     description: `Programme de fidélité de ${name}`,
-    start_url: `/${slug}`,
-    scope: `/${slug}`,
+    start_url: `/${slug}/dashboard`,
+    scope: `/${slug}/`,
     display: 'standalone',
     background_color: '#06061a',
-    theme_color: '#cc0000',
+    theme_color: '#22d3ee',
     orientation: 'portrait',
     icons: [
       {
@@ -30,5 +30,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
         purpose: 'any maskable',
       },
     ],
+  }, {
+    headers: { 'Content-Type': 'application/manifest+json' },
   })
 }
