@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Bell } from 'lucide-react'
+import { Bell, BellOff } from 'lucide-react'
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -14,17 +14,20 @@ function urlBase64ToUint8Array(base64String: string) {
 
 export default function PushSubscriber({ slug, profileId }: { slug: string; profileId: string }) {
   const [showBanner, setShowBanner] = useState(false)
+  const [denied, setDenied] = useState(false)
   const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
     if (Notification.permission === 'granted') {
-      // Déjà autorisé — re-sauvegarder l'abonnement silencieusement
       saveSubscription()
       return
     }
-    if (Notification.permission === 'denied') return
-    // 'default' → proposer le bouton
+    if (Notification.permission === 'denied') {
+      setDenied(true)
+      return
+    }
     setShowBanner(true)
   }, [slug, profileId]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -32,7 +35,8 @@ export default function PushSubscriber({ slug, profileId }: { slug: string; prof
     try {
       const reg = await navigator.serviceWorker.register('/sw.js')
       await navigator.serviceWorker.ready
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      if (!vapidKey) { setError('Clé VAPID manquante'); return }
       const existing = await reg.pushManager.getSubscription()
       const subscription = existing ?? await reg.pushManager.subscribe({
         userVisibleOnly: true,
@@ -44,9 +48,9 @@ export default function PushSubscriber({ slug, profileId }: { slug: string; prof
         body: JSON.stringify({ profileId, subscription }),
       })
       const data = await res.json()
-      if (!res.ok) alert('Erreur push: ' + JSON.stringify(data))
+      if (!res.ok) setError('Erreur: ' + JSON.stringify(data))
     } catch (e) {
-      alert('Erreur subscription: ' + String(e))
+      setError(String(e))
     }
   }
 
@@ -56,12 +60,38 @@ export default function PushSubscriber({ slug, profileId }: { slug: string; prof
       await saveSubscription()
       setDone(true)
       setShowBanner(false)
+    } else if (permission === 'denied') {
+      setShowBanner(false)
+      setDenied(true)
     } else {
       setShowBanner(false)
     }
   }
 
-  if (!showBanner || done) return null
+  if (done) return null
+
+  if (error) return (
+    <div className="mx-5 mb-4 rounded-2xl px-4 py-3"
+      style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.4)' }}>
+      <p className="text-xs text-red-400 font-bold">Erreur notifications</p>
+      <p className="text-xs text-red-300 mt-1 break-all">{error}</p>
+    </div>
+  )
+
+  if (denied) return (
+    <div className="mx-5 mb-4 rounded-2xl px-4 py-3 flex items-start gap-3"
+      style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)' }}>
+      <BellOff className="w-5 h-5 shrink-0 mt-0.5" style={{ color: '#f59e0b' }} />
+      <div>
+        <p className="text-xs font-bold" style={{ color: '#f59e0b' }}>Notifications bloquées</p>
+        <p className="text-xs text-slate-400 mt-0.5">
+          Allez dans Paramètres Chrome → Paramètres du site → Notifications → autorisez ce site
+        </p>
+      </div>
+    </div>
+  )
+
+  if (!showBanner) return null
 
   return (
     <div className="mx-5 mb-4 rounded-2xl px-4 py-3 flex items-center gap-3"
