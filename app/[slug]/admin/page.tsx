@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Lock, Users, Gift, Send, Settings, ChevronRight, Cigarette, QrCode, Star, Loader2 } from 'lucide-react'
+import { Lock, Users, Gift, Send, Settings, ChevronRight, Cigarette, QrCode, Star, Loader2, CreditCard } from 'lucide-react'
 
 
 export default function AdminPage() {
@@ -122,6 +122,7 @@ export default function AdminPage() {
     { href: `/${slug}/admin/push`,      label: 'Envoyer une notification', icon: Send,     desc: 'Promo à tous les clients',     color: { text: '#8b5cf6', bg: 'rgba(139,92,246,0.08)',  border: 'rgba(139,92,246,0.25)'  } },
     { href: `/${slug}/admin/settings`,  label: 'Paramètres',               icon: Settings, desc: 'Code PIN et configuration',   color: { text: '#34d399', bg: 'rgba(52,211,153,0.08)',  border: 'rgba(52,211,153,0.25)'  } },
     { href: `/${slug}/admin/qrcode`,    label: 'QR Code',                  icon: QrCode,   desc: 'Imprimer / Télécharger',       color: { text: '#a78bfa', bg: 'rgba(167,139,250,0.08)',  border: 'rgba(167,139,250,0.25)'  } },
+    { href: `/${slug}/admin/abonnement`, label: 'Mon abonnement',           icon: CreditCard, desc: 'Formule, facturation, résiliation', color: { text: '#34d399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.25)' } },
   ]
 
   return (

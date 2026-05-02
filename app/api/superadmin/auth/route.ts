@@ -1,20 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 
-const ADMIN_EMAIL = 'tahardjamel22@gmail.com'
-const ADMIN_PASSWORD = '40Glacialxivire!'
 const COOKIE_NAME = 'superadmin_session'
-const COOKIE_VALUE = 'tabacfrance_superadmin_2026'
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+  const validEmail = process.env.SUPERADMIN_EMAIL
+  const validPassword = process.env.SUPERADMIN_PASSWORD
+  const cookieValue = process.env.SUPERADMIN_COOKIE_SECRET ?? 'tabacfrance_superadmin_2026'
+
+  if (!validEmail || !validPassword) {
+    return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 })
+  }
+
+  if (email === validEmail && password === validPassword) {
     const cookieStore = await cookies()
-    cookieStore.set(COOKIE_NAME, COOKIE_VALUE, {
+    cookieStore.set(COOKIE_NAME, cookieValue, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 jours
+      maxAge: 60 * 60 * 24 * 7,
       path: '/',
     })
     return NextResponse.json({ ok: true })
