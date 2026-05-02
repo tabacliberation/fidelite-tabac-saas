@@ -47,8 +47,10 @@ export default function PushSubscriber({ slug, profileId }: { slug: string; prof
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profileId, subscription }),
       })
-      const data = await res.json()
-      if (!res.ok) setError('Erreur: ' + JSON.stringify(data))
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError('Erreur: ' + JSON.stringify(data))
+      }
     } catch (e) {
       setError(String(e))
     }
