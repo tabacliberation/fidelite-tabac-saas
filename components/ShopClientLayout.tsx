@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import BottomNav from './BottomNav'
 import PWAInstallBanner from './PWAInstallBanner'
@@ -7,6 +8,12 @@ import PWAInstallBanner from './PWAInstallBanner'
 export default function ShopClientLayout({ slug, shopName, children }: { slug: string; shopName: string; children: React.ReactNode }) {
   const pathname = usePathname()
   const isAdmin = pathname.includes('/admin')
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {})
+    }
+  }, [])
 
   if (isAdmin) {
     return (
