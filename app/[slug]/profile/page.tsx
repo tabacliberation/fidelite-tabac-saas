@@ -35,10 +35,24 @@ export default function ProfilePage() {
 
   const handleEnablePush = async () => {
     if (!profile) return
+
+    // Détecter Brave qui bloque requestPermission silencieusement
+    const isBrave = (navigator as any).brave && await (navigator as any).brave.isBrave().catch(() => false)
+    if (isBrave) {
+      setPushError('Brave bloque les notifications. Ouvrez cette page dans Chrome.')
+      return
+    }
+
     setPushLoading(true)
     setPushError('')
     try {
-      const permission = await Notification.requestPermission()
+      // Timeout 10s si le navigateur bloque la popup silencieusement
+      const permission = await Promise.race([
+        Notification.requestPermission(),
+        new Promise<NotificationPermission>((_, reject) =>
+          setTimeout(() => reject(new Error('Le navigateur bloque la demande. Essayez Chrome.')), 10000)
+        ),
+      ])
       if (permission !== 'granted') {
         setPushStatus('denied')
         setPushLoading(false)
