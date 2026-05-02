@@ -13,12 +13,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     const { data: shop } = await db.from('shops').select('id').eq('slug', slug).single()
     if (!shop) return NextResponse.json({ error: 'Shop introuvable' }, { status: 404 })
 
-    await db.from('push_subscriptions').upsert({
+    const { error: upsertError } = await db.from('push_subscriptions').upsert({
       shop_id: shop.id,
       profile_id: profileId,
       endpoint: subscription.endpoint,
       subscription,
     }, { onConflict: 'endpoint' })
+
+    if (upsertError) {
+      return NextResponse.json({ error: upsertError.message, code: upsertError.code }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true })
   } catch (e) {
