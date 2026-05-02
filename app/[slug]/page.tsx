@@ -655,20 +655,26 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
             </div>
           )}
 
-          {/* Erreur / vide */}
-          {!pmuLoading && (pmuData?.error || pmuData?.reunions?.length === 0) && (
+          {/* Erreur / vide / indisponible */}
+          {!pmuLoading && pmuData && (pmuData.reunions?.length === 0) && (
             <div className="text-center py-16">
               <span className="text-5xl block mb-4">🏇</span>
               <p className="font-black text-white mb-1">
-                {pmuData?.error ? 'Service temporairement indisponible' : 'Aucune course programmée'}
+                {(pmuData as {unavailable?: boolean}).unavailable
+                  ? 'Programme PMU indisponible depuis l\'étranger'
+                  : 'Aucune course programmée aujourd\'hui'}
               </p>
-              {pmuData?.error && (
-                <button
-                  onClick={() => { setPmuData(null); setPmuLoading(true); fetch('/api/pmu').then(r => r.json()).then(setPmuData).finally(() => setPmuLoading(false)) }}
-                  className="mt-3 text-xs px-4 py-2 rounded-xl font-bold"
+              <p className="text-sm mt-1" style={{ color: '#475569' }}>
+                {(pmuData as {unavailable?: boolean}).unavailable
+                  ? 'Consultez pmu.fr pour le programme complet'
+                  : 'Revenez demain pour les prochaines courses'}
+              </p>
+              {(pmuData as {unavailable?: boolean}).unavailable && (
+                <a href="https://www.pmu.fr/turf/programme-des-courses" target="_blank" rel="noreferrer"
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs px-4 py-2 rounded-xl font-bold"
                   style={{ background: 'rgba(217,70,239,0.1)', color: '#d946ef', border: '1px solid rgba(217,70,239,0.25)' }}>
-                  Réessayer
-                </button>
+                  Voir sur pmu.fr →
+                </a>
               )}
             </div>
           )}
