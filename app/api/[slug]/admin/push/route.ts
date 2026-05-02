@@ -49,11 +49,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     const { data: subs } = await subsQuery
 
     let pushed = 0
+    const pushErrors: string[] = []
     if (subs?.length) {
       const payload = JSON.stringify({
         title,
         body,
-        icon: '/icon-192.svg',
+        icon: '/icon-192.png',
         url: `/${slug}/notifications`,
       })
       await Promise.allSettled(
@@ -61,14 +62,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
           try {
             await webpush.sendNotification(row.subscription, payload)
             pushed++
-          } catch {
-            // Subscription expirée ou invalide — on ignore
+          } catch (e) {
+            pushErrors.push(String(e))
           }
         })
       )
     }
 
-    return NextResponse.json({ success: true, sent: profiles.length, pushed })
+    return NextResponse.json({ success: true, sent: profiles.length, pushed, subs: subs?.length ?? 0, pushErrors })
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 })
   }

@@ -11,7 +11,7 @@ export default function AdminPushPage() {
   const [form, setForm] = useState({ title: '', body: '', image: '' })
   const [loading, setLoading] = useState(false)
   const [uploading, setUploading] = useState(false)
-  const [result, setResult] = useState<number | null>(null)
+  const [result, setResult] = useState<{ sent: number; pushed: number; subs: number; pushErrors: string[] } | null>(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function AdminPushPage() {
     })
     const data = await res.json()
     if (!res.ok) { setError(data.error || 'Erreur envoi'); setLoading(false); return }
-    setResult(data.sent ?? 0)
+    setResult(data)
     setLoading(false)
   }
 
@@ -108,10 +108,19 @@ export default function AdminPushPage() {
         )}
 
         {result !== null && (
-          <p className="text-sm rounded-xl px-4 py-3"
-            style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.25)' }}>
-            ✓ Notification envoyée à {result} client{result > 1 ? 's' : ''}
-          </p>
+          <div className="rounded-xl px-4 py-3 space-y-1"
+            style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.25)' }}>
+            <p className="text-sm font-bold" style={{ color: '#4ade80' }}>
+              ✓ Envoyé à {result.pushed}/{result.subs} appareil{result.subs > 1 ? 's' : ''} ({result.sent} client{result.sent > 1 ? 's' : ''})
+            </p>
+            {result.pushErrors.length > 0 && (
+              <div className="mt-2">
+                {result.pushErrors.map((e, i) => (
+                  <p key={i} className="text-xs break-all" style={{ color: '#f87171' }}>{e}</p>
+                ))}
+              </div>
+            )}
+          </div>
         )}
 
         <button onClick={handleSend} disabled={loading || !form.title || !form.body}
