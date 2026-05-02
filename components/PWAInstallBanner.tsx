@@ -14,11 +14,16 @@ export default function PWAInstallBanner({ slug, shopName }: Props) {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
   useEffect(() => {
-    // Déjà installé en mode standalone → ne rien montrer
+    // Déjà installé → ne rien montrer
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
-      (navigator as any).standalone === true
+      window.matchMedia('(display-mode: minimal-ui)').matches ||
+      (navigator as any).standalone === true ||
+      document.referrer.startsWith('android-app://')
     if (isStandalone) return
+
+    // L'utilisateur a déjà installé (flag persistant)
+    if (localStorage.getItem('pwa_installed')) return
 
     // Snooze de 3 jours si l'utilisateur a cliqué "Plus tard"
     const snoozeKey = `pwa_snooze_${slug}`
@@ -60,7 +65,10 @@ export default function PWAInstallBanner({ slug, shopName }: Props) {
     if (!deferredPrompt) return
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') setShow(false)
+    if (outcome === 'accepted') {
+      localStorage.setItem('pwa_installed', '1')
+      setShow(false)
+    }
     setDeferredPrompt(null)
   }
 
