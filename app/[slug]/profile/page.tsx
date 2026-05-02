@@ -54,8 +54,7 @@ export default function ProfilePage() {
     const perm = Notification.permission as 'default' | 'granted' | 'denied'
     setPushStatus(perm)
     if (perm === 'granted') {
-      // Permission déjà accordée → sauvegarder l'abonnement silencieusement
-      savePushSubscription(slug, p.id).catch(() => {})
+      savePushSubscription(slug, p.id).catch((e) => setPushError(String(e)))
     }
   }, [slug, router])
 
@@ -146,11 +145,20 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   {pushStatus === 'granted' ? (
-                    <span className="text-xs px-3 py-1 rounded-full font-bold"
-                      style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)' }}
+                    <button
+                      onClick={async () => {
+                        setPushLoading(true)
+                        setPushError('')
+                        try { await savePushSubscription(slug, profile.id) }
+                        catch (e) { setPushError(String(e)) }
+                        setPushLoading(false)
+                      }}
+                      disabled={pushLoading}
+                      className="text-xs px-3 py-1 rounded-full font-bold"
+                      style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', opacity: pushLoading ? 0.6 : 1 }}
                     >
-                      Activées ✓
-                    </span>
+                      {pushLoading ? '...' : 'Activées ✓'}
+                    </button>
                   ) : pushStatus === 'denied' ? (
                     <span className="text-xs px-3 py-1 rounded-full font-bold"
                       style={{ color: '#f59e0b', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)' }}
