@@ -8,8 +8,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
     const body = await req.json().catch(() => ({}))
     const { plan } = body
 
-    const flexId = process.env.STRIPE_PRICE_FLEX_ID ?? 'price_1TRwHyGu8HK6uBZzaCg5cbd6'
-    const engId = process.env.STRIPE_PRICE_ENGAGEMENT_ID ?? 'price_1TRwHyGu8HK6uBZzGuSv8a0D'
+    const flexId = 'price_1TRwHyGu8HK6uBZzaCg5cbd6'
+    const engId = 'price_1TRwHyGu8HK6uBZzGuSv8a0D'
     const secretKey = process.env.STRIPE_SECRET_KEY
 
     if (!secretKey) {
