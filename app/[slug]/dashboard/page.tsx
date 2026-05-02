@@ -6,6 +6,7 @@ import { Plus, Bell, Cigarette } from 'lucide-react'
 import LoyaltyCard from '@/components/LoyaltyCard'
 import LoyaltyCardSkeleton from '@/components/LoyaltyCardSkeleton'
 import PinModal from '@/components/PinModal'
+import PushSubscriber from '@/components/PushSubscriber'
 
 interface Profile { id: string; first_name: string; last_name: string; phone: string }
 interface Card {
@@ -110,6 +111,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen pb-24 neon-grid" style={{ background: '#06061a' }}>
+      {profile && <PushSubscriber slug={slug} profileId={profile.id} />}
 
       {/* Header */}
       <div className="px-5 pb-6 page-top-pad" style={{ background: 'rgba(10,12,35,0.9)', borderBottom: '1px solid rgba(34,211,238,0.15)' }}>
