@@ -439,6 +439,9 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
               🎰 LANCER LA ROUE !
             </button>
           )}
+          <p className="text-center text-[11px] mt-4" style={{ color: '#334155' }}>
+            🔞 Jeu réservé aux personnes majeures · Jouez de manière responsable
+          </p>
         </div>
       )}
 
@@ -647,7 +650,7 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
           </div>
 
           {/* Bouton programme du jour */}
-          <a href="https://www.pmu.fr/turf/programme-des-courses" target="_blank" rel="noreferrer"
+          <a href="https://www.pmu.fr/turf" target="_blank" rel="noreferrer"
             className="flex items-center justify-between w-full rounded-2xl p-4 mb-4 active:scale-95 transition-transform"
             style={{ background: 'linear-gradient(135deg, rgba(217,70,239,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(217,70,239,0.4)', boxShadow: '0 0 20px rgba(217,70,239,0.1)' }}>
             <div className="flex items-center gap-3">

@@ -656,6 +656,8 @@ export default function LandingPage() {
                 { icon: '✅', title: 'Validation des tampons par PIN', desc: 'Entrez votre code secret pour valider — sécurisé' },
                 { icon: '📢', title: 'Notifications push ciblées', desc: 'Envoyez un message à tous vos clients en un clic' },
                 { icon: '🎡', title: 'Roue de la chance', desc: 'Suivez les gains et marquez-les comme remis' },
+                { icon: '⚽', title: 'Scores foot en direct', desc: 'Ligue 1, Champions League, Premier League et plus' },
+                { icon: '🏇', title: 'Guide PMU intégré', desc: 'Programme des courses et guide des paris hippiques' },
               ].map((f, i) => (
                 <div key={i} className="flex gap-4 items-start">
                   <span className="text-2xl">{f.icon}</span>
@@ -666,6 +668,75 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Foot + PMU */}
+      <section className="px-6 py-20 max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-block bg-purple-500/10 border border-purple-500/30 text-purple-400 text-sm px-4 py-1 rounded-full mb-4">
+            Exclusif TabacFrance
+          </div>
+          <h2 className="text-3xl font-black mb-4">
+            Foot & PMU directement dans votre app
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Vos clients restent dans votre application pour suivre les matchs et consulter les courses. Plus de temps passé = plus de fidélité.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Foot */}
+          <div className="rounded-3xl p-8 border border-cyan-500/20"
+            style={{ background: 'linear-gradient(135deg, rgba(34,211,238,0.06) 0%, rgba(10,10,20,1) 100%)' }}>
+            <div className="text-4xl mb-4">⚽</div>
+            <h3 className="text-xl font-black mb-2">Scores foot en direct</h3>
+            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+              Vos clients suivent leurs matchs favoris depuis votre app. Scores live, matchs à venir, 6 compétitions majeures.
+            </p>
+            <div className="space-y-2">
+              {[
+                { flag: '🇫🇷', name: 'Ligue 1' },
+                { flag: '⭐', name: 'Champions League' },
+                { flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', name: 'Premier League' },
+                { flag: '🇩🇪', name: 'Bundesliga' },
+                { flag: '🇮🇹', name: 'Serie A' },
+                { flag: '🇪🇸', name: 'La Liga' },
+              ].map(({ flag, name }) => (
+                <div key={name} className="flex items-center gap-2 text-sm text-gray-300">
+                  <span>{flag}</span> {name}
+                  <div className="ml-auto flex items-center gap-1 text-[10px] text-red-400 font-bold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    LIVE
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* PMU */}
+          <div className="rounded-3xl p-8 border border-purple-500/20"
+            style={{ background: 'linear-gradient(135deg, rgba(217,70,239,0.06) 0%, rgba(10,10,20,1) 100%)' }}>
+            <div className="text-4xl mb-4">🏇</div>
+            <h3 className="text-xl font-black mb-2">Guide PMU intégré</h3>
+            <p className="text-gray-400 text-sm mb-6 leading-relaxed">
+              Programme des courses, explication des paris, lien direct vers PMU. Vos clients parient plus facilement depuis votre tabac.
+            </p>
+            <div className="space-y-2">
+              {[
+                { emoji: '🥉', label: 'Tiercé — 3 premiers chevaux' },
+                { emoji: '4️⃣', label: 'Quarté+ — 4 premiers' },
+                { emoji: '5️⃣', label: 'Quinté+ — le plus populaire' },
+                { emoji: '2️⃣', label: 'Couplé — 2 chevaux liés' },
+                { emoji: '🎯', label: 'Simple Gagnant / Placé' },
+              ].map(({ emoji, label }) => (
+                <div key={label} className="flex items-center gap-2 text-sm text-gray-300">
+                  <span>{emoji}</span> {label}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs mt-4 text-gray-600">🔞 Réservé aux personnes majeures</p>
           </div>
         </div>
       </section>
@@ -802,6 +873,7 @@ export default function LandingPage() {
             <a href="mailto:contact@tabacfrance.fr" className="hover:text-white transition-colors">contact@tabacfrance.fr</a>
           </div>
           <p className="text-xs text-gray-700 mt-5">© {new Date().getFullYear()} Ring&apos;s Shop — Tous droits réservés</p>
+          <p className="text-xs text-gray-700 mt-2">🔞 Les fonctionnalités de jeu et paris sont réservées aux personnes majeures · Jouez de manière responsable</p>
         </div>
       </footer>
     </div>
