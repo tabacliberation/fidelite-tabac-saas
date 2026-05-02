@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { Bell } from 'lucide-react'
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -12,40 +13,68 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 export default function PushSubscriber({ slug, profileId }: { slug: string; profileId: string }) {
+  const [showBanner, setShowBanner] = useState(false)
+  const [done, setDone] = useState(false)
+
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
-    if (Notification.permission === 'denied') return
-
-    const run = async () => {
-      try {
-        const reg = await navigator.serviceWorker.register('/sw.js')
-        await navigator.serviceWorker.ready
-
-        const permission = await Notification.requestPermission()
-        if (permission !== 'granted') return
-
-        const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
-        const existing = await reg.pushManager.getSubscription()
-        const subscription = existing ?? await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidKey),
-        })
-
-        const res = await fetch(`/api/${slug}/push-subscription`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profileId, subscription }),
-        })
-
-        if (res.ok) localStorage.setItem(`push_ok_${slug}_${profileId}`, '1')
-      } catch {
-        // Silencieux — pas bloquant
-      }
+    if (Notification.permission === 'granted') {
+      // Déjà autorisé — re-sauvegarder l'abonnement silencieusement
+      saveSubscription()
+      return
     }
+    if (Notification.permission === 'denied') return
+    // 'default' → proposer le bouton
+    setShowBanner(true)
+  }, [slug, profileId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Relancer même si déjà fait (pour récupérer les abonnements expirés)
-    run()
-  }, [slug, profileId])
+  const saveSubscription = async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js')
+      await navigator.serviceWorker.ready
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!
+      const existing = await reg.pushManager.getSubscription()
+      const subscription = existing ?? await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      })
+      await fetch(`/api/${slug}/push-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId, subscription }),
+      })
+    } catch {
+      // Silencieux
+    }
+  }
 
-  return null
+  const handleEnable = async () => {
+    const permission = await Notification.requestPermission()
+    if (permission === 'granted') {
+      await saveSubscription()
+      setDone(true)
+      setShowBanner(false)
+    } else {
+      setShowBanner(false)
+    }
+  }
+
+  if (!showBanner || done) return null
+
+  return (
+    <div className="mx-5 mb-4 rounded-2xl px-4 py-3 flex items-center gap-3"
+      style={{ background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.3)' }}>
+      <Bell className="w-5 h-5 shrink-0" style={{ color: '#22d3ee' }} />
+      <p className="flex-1 text-xs text-slate-300">
+        Activez les notifications pour recevoir vos promos
+      </p>
+      <button
+        onClick={handleEnable}
+        className="text-xs font-black px-3 py-1.5 rounded-xl shrink-0"
+        style={{ background: 'rgba(34,211,238,0.2)', color: '#22d3ee', border: '1px solid rgba(34,211,238,0.4)' }}
+      >
+        Activer
+      </button>
+    </div>
+  )
 }
