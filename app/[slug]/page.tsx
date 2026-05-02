@@ -151,11 +151,19 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
   useEffect(() => {
     if (activeTab === 'foot' && !footballData && !footballLoading) {
       setFootballLoading(true)
-      fetch('/api/football').then(r => r.json()).then(setFootballData).finally(() => setFootballLoading(false))
+      fetch('/api/football')
+        .then(async r => { const t = await r.text(); return t.trim() ? JSON.parse(t) : {} })
+        .then(setFootballData)
+        .catch(() => setFootballData({ matches: [], error: 'Erreur réseau' }))
+        .finally(() => setFootballLoading(false))
     }
     if (activeTab === 'pmu' && !pmuData && !pmuLoading) {
       setPmuLoading(true)
-      fetch('/api/pmu').then(r => r.json()).then(setPmuData).finally(() => setPmuLoading(false))
+      fetch('/api/pmu')
+        .then(async r => { const t = await r.text(); return t.trim() ? JSON.parse(t) : {} })
+        .then(setPmuData)
+        .catch(() => setPmuData({ reunions: [] }))
+        .finally(() => setPmuLoading(false))
     }
   }, [activeTab]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -538,7 +546,7 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
               <span className="text-5xl block mb-4">📡</span>
               <p className="font-black text-white mb-2">Connexion au service</p>
               <button
-                onClick={() => { setFootballData(null); setFootballLoading(true); fetch('/api/football').then(r => r.json()).then(setFootballData).finally(() => setFootballLoading(false)) }}
+                onClick={() => { setFootballData(null); setFootballLoading(true); fetch('/api/football').then(async r => { const t = await r.text(); return t.trim() ? JSON.parse(t) : {} }).then(setFootballData).catch(() => setFootballData({ matches: [], error: 'Erreur réseau' })).finally(() => setFootballLoading(false)) }}
                 className="mt-3 text-xs px-4 py-2 rounded-xl font-bold"
                 style={{ background: 'rgba(34,211,238,0.1)', color: '#22d3ee', border: '1px solid rgba(34,211,238,0.25)' }}>
                 Réessayer

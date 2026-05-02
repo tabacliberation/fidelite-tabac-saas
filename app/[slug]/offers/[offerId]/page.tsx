@@ -47,7 +47,7 @@ export default function OfferDetailPage() {
     fetch(`/api/${slug}/offers/${offerId}`)
       .then(async r => {
         const text = await r.text()
-        if (!text) throw new Error('Réponse vide')
+        if (!text.trim()) throw new Error('Réponse vide')
         return JSON.parse(text)
       })
       .then(data => {

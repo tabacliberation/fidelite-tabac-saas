@@ -29,10 +29,17 @@ export default function OffersPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/${slug}/admin/offers`).then(r => r.json()).then(d => {
-      setOffers((d.offers || []).filter((o: any) => o.is_active))
-      setLoading(false)
-    })
+    fetch(`/api/${slug}/offers`)
+      .then(async r => {
+        const text = await r.text()
+        if (!text.trim()) return { offers: [] }
+        return JSON.parse(text)
+      })
+      .then(d => {
+        setOffers(d.offers || [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
   }, [slug])
 
   return (
