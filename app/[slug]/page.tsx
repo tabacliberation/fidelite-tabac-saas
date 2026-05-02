@@ -639,129 +639,71 @@ export default function ShopPage({ params }: { params: Promise<{ slug: string }>
               <span className="text-2xl">🏇</span>
             </div>
             <div>
-              <h2 className="font-black text-white">PMU — Courses du jour</h2>
+              <h2 className="font-black text-white">PMU — Paris hippiques</h2>
               <p className="text-xs" style={{ color: '#475569' }}>
                 {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
               </p>
             </div>
           </div>
 
-          {/* Skeleton */}
-          {pmuLoading && (
-            <div className="space-y-3">
-              {[1,2,3].map(i => (
-                <div key={i} className="h-32 rounded-2xl animate-pulse" style={{ background: 'rgba(217,70,239,0.04)', border: '1px solid rgba(217,70,239,0.1)' }} />
-              ))}
+          {/* Bouton programme du jour */}
+          <a href="https://www.pmu.fr/turf/programme-des-courses" target="_blank" rel="noreferrer"
+            className="flex items-center justify-between w-full rounded-2xl p-4 mb-4 active:scale-95 transition-transform"
+            style={{ background: 'linear-gradient(135deg, rgba(217,70,239,0.15), rgba(139,92,246,0.1))', border: '1px solid rgba(217,70,239,0.4)', boxShadow: '0 0 20px rgba(217,70,239,0.1)' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📋</span>
+              <div>
+                <p className="font-black text-white text-sm">Programme du jour</p>
+                <p className="text-xs" style={{ color: '#d946ef' }}>Toutes les courses sur pmu.fr</p>
+              </div>
             </div>
-          )}
+            <span className="text-lg" style={{ color: '#d946ef' }}>→</span>
+          </a>
 
-          {/* Erreur / vide / indisponible */}
-          {!pmuLoading && pmuData && (pmuData.reunions?.length === 0) && (
-            <div className="text-center py-16">
-              <span className="text-5xl block mb-4">🏇</span>
-              <p className="font-black text-white mb-1">
-                {(pmuData as {unavailable?: boolean}).unavailable
-                  ? 'Programme PMU indisponible depuis l\'étranger'
-                  : 'Aucune course programmée aujourd\'hui'}
-              </p>
-              <p className="text-sm mt-1" style={{ color: '#475569' }}>
-                {(pmuData as {unavailable?: boolean}).unavailable
-                  ? 'Consultez pmu.fr pour le programme complet'
-                  : 'Revenez demain pour les prochaines courses'}
-              </p>
-              {(pmuData as {unavailable?: boolean}).unavailable && (
-                <a href="https://www.pmu.fr/turf/programme-des-courses" target="_blank" rel="noreferrer"
-                  className="mt-4 inline-flex items-center gap-1.5 text-xs px-4 py-2 rounded-xl font-bold"
-                  style={{ background: 'rgba(217,70,239,0.1)', color: '#d946ef', border: '1px solid rgba(217,70,239,0.25)' }}>
-                  Voir sur pmu.fr →
-                </a>
-              )}
+          {/* Bouton parier en ligne */}
+          <a href="https://www.pmu.fr/turf" target="_blank" rel="noreferrer"
+            className="flex items-center justify-between w-full rounded-2xl p-4 mb-6 active:scale-95 transition-transform"
+            style={{ background: 'rgba(10,12,35,0.85)', border: '1px solid rgba(217,70,239,0.2)' }}>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🎫</span>
+              <div>
+                <p className="font-black text-white text-sm">Parier en ligne</p>
+                <p className="text-xs" style={{ color: '#475569' }}>Tiercé, Quarté+, Quinté+</p>
+              </div>
             </div>
-          )}
+            <span className="text-lg" style={{ color: '#475569' }}>→</span>
+          </a>
 
-          {/* Réunions */}
-          {!pmuLoading && pmuData?.reunions && pmuData.reunions.length > 0 && (
-            <div className="space-y-4">
-              {pmuData.reunions.map((reunion) => (
-                <div key={reunion.numOrdre} className="rounded-2xl overflow-hidden"
-                  style={{ background: 'rgba(10,12,35,0.85)', border: '1px solid rgba(217,70,239,0.2)' }}>
-                  {/* Hippodrome header */}
-                  <div className="px-4 py-3 flex items-center gap-3"
-                    style={{ background: 'rgba(217,70,239,0.06)', borderBottom: '1px solid rgba(217,70,239,0.12)' }}>
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ background: 'rgba(217,70,239,0.12)', border: '1px solid rgba(217,70,239,0.25)' }}>
-                      <span className="text-sm font-black" style={{ color: '#d946ef' }}>R{reunion.numOrdre}</span>
-                    </div>
-                    <div>
-                      <p className="font-black text-white text-sm">
-                        {reunion.hippodrome?.libelleLong ?? reunion.hippodrome?.libelleCourt ?? 'Hippodrome'}
-                      </p>
-                      <p className="text-[10px]" style={{ color: '#d946ef' }}>
-                        {reunion.courses?.length ?? 0} course{(reunion.courses?.length ?? 0) > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Liste des courses */}
-                  <div>
-                    {reunion.courses?.map((course, ci) => {
-                      const dept = new Date(course.heureDepart).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-                      const isNow = Math.abs(new Date(course.heureDepart).getTime() - Date.now()) < 15 * 60 * 1000
-                      const typeColors: Record<string, string> = {
-                        PLAT: '#22d3ee', TROT: '#f59e0b', OBSTACLE: '#34d399', ATTELE: '#f59e0b', MONTE: '#8b5cf6',
-                      }
-                      const typeLabels: Record<string, string> = {
-                        PLAT: 'Plat', TROT: 'Trot', OBSTACLE: 'Obstacle', ATTELE: 'Attelé', MONTE: 'Monté',
-                      }
-                      const tc = course.typeCourse ?? 'PLAT'
-                      const color = typeColors[tc] ?? '#94a3b8'
-                      const label = typeLabels[tc] ?? tc
-                      return (
-                        <div key={ci}
-                          className="px-4 py-2.5 flex items-center gap-3"
-                          style={{
-                            borderTop: ci > 0 ? '1px solid rgba(217,70,239,0.07)' : 'none',
-                            background: isNow ? 'rgba(217,70,239,0.05)' : 'transparent',
-                          }}>
-                          {/* Heure */}
-                          <div className="w-12 shrink-0">
-                            {isNow ? (
-                              <div className="flex items-center gap-1">
-                                <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#d946ef' }} />
-                                <span className="text-[10px] font-black" style={{ color: '#d946ef' }}>{dept}</span>
-                              </div>
-                            ) : (
-                              <span className="text-xs font-bold" style={{ color: '#64748b' }}>{dept}</span>
-                            )}
-                          </div>
-
-                          {/* Infos course */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold text-white truncate">
-                              C{course.numOrdre} — {course.libelle}
-                            </p>
-                            <p className="text-[10px]" style={{ color: '#475569' }}>
-                              {course.distance ? `${course.distance}m` : ''}{course.nombreDeclaresPartants ? ` · ${course.nombreDeclaresPartants} partants` : ''}
-                            </p>
-                          </div>
-
-                          {/* Type badge */}
-                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md shrink-0"
-                            style={{ background: `${color}15`, color, border: `1px solid ${color}30` }}>
-                            {label}
-                          </span>
-                        </div>
-                      )
-                    })}
-                  </div>
+          {/* Infos types de paris */}
+          <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: '#475569' }}>
+            Les paris PMU au tabac
+          </p>
+          <div className="space-y-2 mb-6">
+            {[
+              { emoji: '🥉', label: 'Tiercé',    desc: 'Les 3 premiers dans l\'ordre ou le désordre', color: '#f59e0b' },
+              { emoji: '4️⃣',  label: 'Quarté+',  desc: 'Les 4 premiers — dans l\'ordre pour le max', color: '#d946ef' },
+              { emoji: '5️⃣',  label: 'Quinté+',  desc: 'Les 5 premiers — le pari le plus populaire', color: '#8b5cf6' },
+              { emoji: '2️⃣',  label: 'Couplé',   desc: '2 chevaux placés ensemble',                   color: '#22d3ee' },
+              { emoji: '🎯',  label: 'Simple',    desc: 'Gagant ou Placé sur un seul cheval',           color: '#34d399' },
+            ].map(({ emoji, label, desc, color }) => (
+              <div key={label} className="flex items-center gap-3 rounded-xl px-4 py-3"
+                style={{ background: 'rgba(10,12,35,0.85)', border: `1px solid ${color}20` }}>
+                <span className="text-xl shrink-0">{emoji}</span>
+                <div className="flex-1">
+                  <p className="text-sm font-black text-white">{label}</p>
+                  <p className="text-[11px]" style={{ color: '#64748b' }}>{desc}</p>
                 </div>
-              ))}
+                <span className="text-xs font-black px-2 py-0.5 rounded-full"
+                  style={{ background: `${color}15`, color, border: `1px solid ${color}30` }}>
+                  PMU
+                </span>
+              </div>
+            ))}
+          </div>
 
-              <p className="text-center text-[10px] mt-2" style={{ color: '#1e293b' }}>
-                Données PMU · Programme officiel du jour
-              </p>
-            </div>
-          )}
+          <p className="text-center text-xs" style={{ color: '#334155' }}>
+            Jouez responsablement · Interdit aux moins de 18 ans
+          </p>
         </div>
       )}
 
