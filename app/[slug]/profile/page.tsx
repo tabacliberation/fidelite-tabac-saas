@@ -13,6 +13,27 @@ function urlBase64ToUint8Array(base64String: string) {
   return output
 }
 
+async function savePushSubscription(slug: string, profileId: string) {
+  const reg = await navigator.serviceWorker.register('/sw.js')
+  await navigator.serviceWorker.ready
+  const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  if (!vapidKey) throw new Error('Clé VAPID manquante')
+  const existing = await reg.pushManager.getSubscription()
+  const subscription = existing ?? await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(vapidKey),
+  })
+  const res = await fetch(`/api/${slug}/push-subscription`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ profileId, subscription }),
+  })
+  if (!res.ok) {
+    const d = await res.json().catch(() => ({}))
+    throw new Error(d.error ?? 'Erreur serveur')
+  }
+}
+
 export default function ProfilePage() {
   const { slug } = useParams<{ slug: string }>()
   const router = useRouter()
@@ -29,34 +50,14 @@ export default function ProfilePage() {
     setProfile(p)
     setLoading(false)
 
-    if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
-      const perm = Notification.permission as 'default' | 'granted' | 'denied'
-      setPushStatus(perm)
-      if (perm === 'granted') {
-        // Abonnement déjà accepté → re-sauvegarder silencieusement (ex: table créée après)
-        saveSubscriptionSilent(p.id)
-      }
+    if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) return
+    const perm = Notification.permission as 'default' | 'granted' | 'denied'
+    setPushStatus(perm)
+    if (perm === 'granted') {
+      // Permission déjà accordée → sauvegarder l'abonnement silencieusement
+      savePushSubscription(slug, p.id).catch(() => {})
     }
-  }, [slug, router]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const saveSubscriptionSilent = async (profileId: string) => {
-    try {
-      const reg = await navigator.serviceWorker.register('/sw.js')
-      await navigator.serviceWorker.ready
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      if (!vapidKey) return
-      const existing = await reg.pushManager.getSubscription()
-      const subscription = existing ?? await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      })
-      await fetch(`/api/${slug}/push-subscription`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profileId, subscription }),
-      })
-    } catch { /* silencieux */ }
-  }
+  }, [slug, router])
 
   const handleEnablePush = async () => {
     if (!profile) return
@@ -70,20 +71,7 @@ export default function ProfilePage() {
         return
       }
       setPushStatus('granted')
-      await saveSubscriptionSilent(profile.id)
-      // Vérifier que l'abonnement a bien été sauvegardé
-      const reg = await navigator.serviceWorker.ready
-      const sub = await reg.pushManager.getSubscription()
-      if (!sub) throw new Error('Abonnement push non créé')
-      const res = await fetch(`/api/${slug}/push-subscription`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profileId: profile.id, subscription: sub }),
-      })
-      if (!res.ok) {
-        const d = await res.json().catch(() => ({}))
-        throw new Error(d.error ?? 'Erreur serveur')
-      }
+      await savePushSubscription(slug, profile.id)
     } catch (e) {
       setPushError(String(e))
     }
@@ -128,7 +116,6 @@ export default function ProfilePage() {
                   <p className="text-xs" style={{ color: '#22d3ee' }}>Membre fidélité</p>
                 </div>
               </div>
-
               <div className="space-y-3 pt-4" style={{ borderTop: '1px solid rgba(34,211,238,0.1)' }}>
                 <div className="flex items-center gap-3 text-sm" style={{ color: '#cbd5e1' }}>
                   <Phone className="w-4 h-4" style={{ color: '#475569' }} />
@@ -143,7 +130,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Notifications */}
             {pushStatus !== 'unsupported' && (
               <div className="rounded-2xl p-5"
                 style={{ background: 'rgba(10,12,35,0.85)', border: '1px solid rgba(217,70,239,0.25)', boxShadow: '0 0 20px rgba(217,70,239,0.06)' }}
@@ -184,7 +170,7 @@ export default function ProfilePage() {
                 </div>
                 {pushStatus === 'denied' && (
                   <p className="text-xs mt-3" style={{ color: '#94a3b8' }}>
-                    Allez dans Paramètres de votre navigateur → Paramètres du site → Notifications → autorisez ce site
+                    Allez dans Paramètres Chrome → Paramètres du site → Notifications → autorisez ce site
                   </p>
                 )}
                 {pushError && (
