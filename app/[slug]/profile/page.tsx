@@ -14,8 +14,8 @@ function urlBase64ToUint8Array(base64String: string) {
 }
 
 async function savePushSubscription(slug: string, profileId: string) {
-  const reg = await navigator.serviceWorker.register('/sw.js')
-  await navigator.serviceWorker.ready
+  await navigator.serviceWorker.register('/sw.js')
+  const reg = await navigator.serviceWorker.ready  // registration active, pas celle de register()
   const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
   if (!vapidKey) throw new Error('Clé VAPID manquante')
   const existing = await reg.pushManager.getSubscription()
@@ -28,10 +28,9 @@ async function savePushSubscription(slug: string, profileId: string) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ profileId, subscription }),
   })
-  if (!res.ok) {
-    const d = await res.json().catch(() => ({}))
-    throw new Error(d.error ?? 'Erreur serveur')
-  }
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.error ?? `Erreur ${res.status}`)
+  return data
 }
 
 export default function ProfilePage() {
@@ -146,7 +145,7 @@ export default function ProfilePage() {
                   </div>
                   {pushStatus === 'granted' ? (
                     <button
-                      onClick={async () => {
+                      onPointerUp={async () => {
                         setPushLoading(true)
                         setPushError('')
                         try { await savePushSubscription(slug, profile.id) }
@@ -155,9 +154,9 @@ export default function ProfilePage() {
                       }}
                       disabled={pushLoading}
                       className="text-xs px-3 py-1 rounded-full font-bold"
-                      style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', opacity: pushLoading ? 0.6 : 1 }}
+                      style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.3)', opacity: pushLoading ? 0.6 : 1, userSelect: 'none', touchAction: 'manipulation' }}
                     >
-                      {pushLoading ? '...' : 'Activées ✓'}
+                      {pushLoading ? '...' : 'Sync ✓'}
                     </button>
                   ) : pushStatus === 'denied' ? (
                     <span className="text-xs px-3 py-1 rounded-full font-bold"
