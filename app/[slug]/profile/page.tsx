@@ -25,57 +25,64 @@ export default function ProfilePage() {
   useEffect(() => {
     const stored = localStorage.getItem(`profile_${slug}`)
     if (!stored) { router.replace(`/${slug}/register`); return }
-    setProfile(JSON.parse(stored))
+    const p = JSON.parse(stored)
+    setProfile(p)
     setLoading(false)
 
     if ('Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window) {
-      setPushStatus(Notification.permission as 'default' | 'granted' | 'denied')
-    }
-  }, [slug, router])
-
-  const handleEnablePush = async () => {
-    if (!profile) return
-
-    // Détecter Brave qui bloque requestPermission silencieusement
-    const isBrave = (navigator as any).brave && await (navigator as any).brave.isBrave().catch(() => false)
-    if (isBrave) {
-      setPushError('Brave bloque les notifications. Ouvrez cette page dans Chrome.')
-      return
-    }
-
-    setPushLoading(true)
-    setPushError('')
-    try {
-      // Timeout 10s si le navigateur bloque la popup silencieusement
-      const permission = await Promise.race([
-        Notification.requestPermission(),
-        new Promise<NotificationPermission>((_, reject) =>
-          setTimeout(() => reject(new Error('Le navigateur bloque la demande. Essayez Chrome.')), 10000)
-        ),
-      ])
-      if (permission !== 'granted') {
-        setPushStatus('denied')
-        setPushLoading(false)
-        return
+      const perm = Notification.permission as 'default' | 'granted' | 'denied'
+      setPushStatus(perm)
+      if (perm === 'granted') {
+        // Abonnement déjà accepté → re-sauvegarder silencieusement (ex: table créée après)
+        saveSubscriptionSilent(p.id)
       }
-      setPushStatus('granted')
+    }
+  }, [slug, router]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const saveSubscriptionSilent = async (profileId: string) => {
+    try {
       const reg = await navigator.serviceWorker.register('/sw.js')
       await navigator.serviceWorker.ready
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      if (!vapidKey) throw new Error('Clé VAPID manquante')
+      if (!vapidKey) return
       const existing = await reg.pushManager.getSubscription()
       const subscription = existing ?? await reg.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
+      await fetch(`/api/${slug}/push-subscription`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileId, subscription }),
+      })
+    } catch { /* silencieux */ }
+  }
+
+  const handleEnablePush = async () => {
+    if (!profile) return
+    setPushLoading(true)
+    setPushError('')
+    try {
+      const permission = await Notification.requestPermission()
+      if (permission !== 'granted') {
+        setPushStatus(permission === 'denied' ? 'denied' : 'default')
+        setPushLoading(false)
+        return
+      }
+      setPushStatus('granted')
+      await saveSubscriptionSilent(profile.id)
+      // Vérifier que l'abonnement a bien été sauvegardé
+      const reg = await navigator.serviceWorker.ready
+      const sub = await reg.pushManager.getSubscription()
+      if (!sub) throw new Error('Abonnement push non créé')
       const res = await fetch(`/api/${slug}/push-subscription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profileId: profile.id, subscription }),
+        body: JSON.stringify({ profileId: profile.id, subscription: sub }),
       })
       if (!res.ok) {
-        const d = await res.json()
-        throw new Error(JSON.stringify(d))
+        const d = await res.json().catch(() => ({}))
+        throw new Error(d.error ?? 'Erreur serveur')
       }
     } catch (e) {
       setPushError(String(e))
