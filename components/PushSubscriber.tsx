@@ -38,13 +38,15 @@ export default function PushSubscriber({ slug, profileId }: { slug: string; prof
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
-      await fetch(`/api/${slug}/push-subscription`, {
+      const res = await fetch(`/api/${slug}/push-subscription`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profileId, subscription }),
       })
-    } catch {
-      // Silencieux
+      const data = await res.json()
+      if (!res.ok) alert('Erreur push: ' + JSON.stringify(data))
+    } catch (e) {
+      alert('Erreur subscription: ' + String(e))
     }
   }
 
