@@ -5,6 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase'
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  try {
   const { slug } = await params
   const db = supabaseAdmin()
 
@@ -58,4 +59,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ slu
     cancelAtPeriodEnd,
     portalUrl,
   })
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
 }

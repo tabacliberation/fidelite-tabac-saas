@@ -38,8 +38,13 @@ export default function AbonnementPage() {
     if (!stored) { router.push(`/${slug}/admin`); return }
 
     fetch(`/api/${slug}/admin/abonnement`)
-      .then(r => r.json())
+      .then(async r => {
+        const text = await r.text()
+        if (!text.trim()) throw new Error('Réponse vide')
+        return JSON.parse(text)
+      })
       .then(setData)
+      .catch(() => {})
       .finally(() => setLoading(false))
   }, [slug, router])
 
