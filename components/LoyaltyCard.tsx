@@ -20,7 +20,15 @@ interface Card {
   offer_id: string
   current_points: number
   completed_count: number
-  offer: { title: string; description: string | null; required_points: number; reward: string | null; icon: string }
+  offer: { title: string; description: string | null; required_points: number; reward: string | null; icon: string; expires_at?: string | null }
+}
+
+function expiresLabel(expiresAt: string): string | null {
+  const diff = Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000)
+  if (diff < 0) return null
+  if (diff === 0) return "Expire aujourd'hui !"
+  if (diff === 1) return 'Expire demain !'
+  return `Expire dans ${diff}j`
 }
 
 export default function LoyaltyCard({ card, index = 0 }: { card: Card; index?: number }) {
@@ -36,6 +44,13 @@ export default function LoyaltyCard({ card, index = 0 }: { card: Card; index?: n
       border: `1px solid ${neon.border}`,
       boxShadow: `0 0 20px ${neon.bg}, inset 0 0 20px rgba(0,0,0,0.3)`,
     }}>
+      {offer.expires_at && expiresLabel(offer.expires_at) && (
+        <div className="mb-3 px-3 py-1.5 rounded-xl text-xs font-black text-center animate-pulse"
+          style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.4)', color: '#f87171' }}
+        >
+          ⚡ {expiresLabel(offer.expires_at)}
+        </div>
+      )}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center"

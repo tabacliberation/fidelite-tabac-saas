@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
 
   // Toutes les offres actives + cartes existantes du client + état du profil en parallèle
   const [offersRes, cardsRes, profileRes] = await Promise.all([
-    db.from('offers').select('id, title, description, required_points, reward, icon, image_url').eq('shop_id', shop.id).eq('is_active', true),
+    db.from('offers').select('id, title, description, required_points, reward, icon, image_url, expires_at').eq('shop_id', shop.id).eq('is_active', true),
     db.from('loyalty_cards').select('offer_id, current_points, completed_count').eq('shop_id', shop.id).eq('profile_id', profileId),
     db.from('profiles').select('pin_locked').eq('id', profileId).single(),
   ])
@@ -38,6 +38,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
       reward: offer.reward,
       icon: offer.icon,
       image_url: offer.image_url,
+      expires_at: offer.expires_at ?? null,
     },
   }))
 

@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false)
   const [checking, setChecking] = useState(true)
   const [shopName, setShopName] = useState('Mon Tabac')
+  const [stats, setStats] = useState<any>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem(`admin_${slug}`)
@@ -22,6 +23,7 @@ export default function AdminPage() {
       setAuthed(true)
       fetch(`/api/${slug}/admin/stats`).then(r => r.json()).then(d => {
         if (d.shopName) setShopName(d.shopName)
+        setStats(d)
       }).catch(() => {})
     }
     setChecking(false)
@@ -138,6 +140,26 @@ export default function AdminPage() {
           <p className="text-xs" style={{ color: '#475569' }}>{shopName}</p>
         </div>
       </div>
+
+      {/* Stats */}
+      {stats && (
+        <div className="mb-6 grid grid-cols-2 gap-3">
+          {[
+            { label: 'Clients', value: stats.totalClients, sub: `+${stats.newClientsMonth} ce mois`, color: '#22d3ee' },
+            { label: 'Notifs activées', value: stats.pushSubscribers, sub: 'appareils abonnés', color: '#d946ef' },
+            { label: 'Points distribués', value: stats.totalPoints, sub: 'total cumulé', color: '#f59e0b' },
+            { label: 'Récompenses', value: stats.totalRewards, sub: 'obtenues au total', color: '#4ade80' },
+          ].map(({ label, value, sub, color }) => (
+            <div key={label} className="rounded-2xl p-4"
+              style={{ background: 'rgba(10,12,35,0.85)', border: `1px solid ${color}30` }}
+            >
+              <p className="text-2xl font-black" style={{ color }}>{value}</p>
+              <p className="text-xs font-bold text-white mt-0.5">{label}</p>
+              <p className="text-xs mt-0.5" style={{ color: '#475569' }}>{sub}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="space-y-3">
         {navItems.map(({ href, label, icon: Icon, desc, color }) => (
