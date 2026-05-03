@@ -655,6 +655,11 @@ export default function LandingPage() {
                 { icon: '👥', title: 'Liste de tous vos clients', desc: 'Nom, téléphone, progression sur chaque offre' },
                 { icon: '✅', title: 'Validation des tampons par PIN', desc: 'Entrez votre code secret pour valider — sécurisé' },
                 { icon: '📢', title: 'Notifications push ciblées', desc: 'Envoyez un message à tous vos clients en un clic' },
+                { icon: '📅', title: 'Notifications programmées', desc: 'Planifiez vos promos à l\'avance avec date et heure' },
+                { icon: '🎂', title: 'Notif anniversaire automatique', desc: 'Vos clients reçoivent un message le jour de leur anniversaire' },
+                { icon: '🔄', title: 'Re-engagement automatique', desc: 'Rappel automatique aux clients inactifs depuis 30 jours' },
+                { icon: '⚡', title: 'Offres flash avec expiration', desc: 'Créez des promos limitées dans le temps avec compte à rebours' },
+                { icon: '📊', title: 'Tableau de bord statistiques', desc: 'Clients, notifs activées, points distribués, récompenses' },
                 { icon: '🎡', title: 'Roue de la chance', desc: 'Suivez les gains et marquez-les comme remis' },
                 { icon: '⚽', title: 'Scores foot en direct', desc: 'Ligue 1, Champions League, Premier League et plus' },
                 { icon: '🏇', title: 'Guide PMU intégré', desc: 'Programme des courses et guide des paris hippiques' },
@@ -669,6 +674,59 @@ export default function LandingPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Section Automatisation */}
+      <section className="px-6 py-20 max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-block bg-green-500/10 border border-green-500/30 text-green-400 text-sm px-4 py-1 rounded-full mb-4">
+            Tout en automatique
+          </div>
+          <h2 className="text-3xl font-black mb-4">
+            Votre marketing tourne <span className="text-green-400">sans vous</span>
+          </h2>
+          <p className="text-gray-400 max-w-xl mx-auto">
+            Configurez une fois, profitez pour toujours. Notre système envoie les bons messages au bon moment.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            {
+              icon: '🎂',
+              color: '#f59e0b',
+              title: 'Anniversaires automatiques',
+              desc: 'Chaque matin, vos clients reçoivent une notification le jour de leur anniversaire. Fidélité garantie sans effort.',
+            },
+            {
+              icon: '🔄',
+              color: '#34d399',
+              title: 'Re-engagement des inactifs',
+              desc: 'Tous les lundis, un rappel est envoyé aux clients qui ne sont pas venus depuis 30 jours. Ils reviennent.',
+            },
+            {
+              icon: '📅',
+              color: '#8b5cf6',
+              title: 'Notifications programmées',
+              desc: 'Planifiez vos promos du week-end le mardi soir. Choisissez la date et l\'heure, on s\'occupe de l\'envoi.',
+            },
+            {
+              icon: '⚡',
+              color: '#f43f5e',
+              title: 'Offres flash avec expiration',
+              desc: 'Créez une offre valable 48h. Un badge rouge compte à rebours visible par vos clients crée l\'urgence.',
+            },
+          ].map((item, i) => (
+            <div key={i} className="rounded-3xl p-6 border flex gap-4 items-start"
+              style={{ background: `${item.color}08`, border: `1px solid ${item.color}25` }}>
+              <div className="text-3xl shrink-0">{item.icon}</div>
+              <div>
+                <h3 className="font-black text-white mb-1">{item.title}</h3>
+                <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -775,7 +833,7 @@ export default function LandingPage() {
             <p className="text-gray-500 text-sm mb-6">Résiliable à tout moment, sans condition</p>
             <div className="text-4xl font-black mb-6">29,90€<span className="text-gray-400 text-base font-normal"> /mois TTC</span></div>
             <ul className="space-y-2 mb-8">
-              {['Application personnalisée à votre nom','Clients et offres illimités','Notifications push','Roue de la chance','QR Code imprimable','Support email','Résiliation à tout moment'].map((item, i) => (
+              {['Application personnalisée à votre nom','Clients et offres illimités','Notifications push immédiates et programmées','Notifications anniversaire automatiques','Re-engagement clients inactifs','Offres flash avec expiration','Tableau de bord statistiques','Roue de la chance','QR Code imprimable','Support email','Résiliation à tout moment'].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
                   <Check size={14} className="text-gray-400 shrink-0" /> {item}
                 </li>
@@ -796,7 +854,7 @@ export default function LandingPage() {
             <p className="text-gray-500 text-sm mb-6">12 mois minimum — le meilleur rapport qualité/prix</p>
             <div className="text-4xl font-black text-cyan-400 mb-6">19,90€<span className="text-gray-400 text-base font-normal"> /mois TTC</span></div>
             <ul className="space-y-2 mb-8">
-              {['Application personnalisée à votre nom','Clients et offres illimités','Notifications push','Roue de la chance','QR Code imprimable','Support prioritaire','Engagement 12 mois minimum'].map((item, i) => (
+              {['Application personnalisée à votre nom','Clients et offres illimités','Notifications push immédiates et programmées','Notifications anniversaire automatiques','Re-engagement clients inactifs','Offres flash avec expiration','Tableau de bord statistiques','Roue de la chance','QR Code imprimable','Support prioritaire','Engagement 12 mois minimum'].map((item, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
                   <Check size={14} className="text-cyan-400 shrink-0" /> {item}
                 </li>
