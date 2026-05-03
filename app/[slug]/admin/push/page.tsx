@@ -92,7 +92,7 @@ export default function AdminPushPage() {
         <button onClick={() => router.back()} style={{ color: '#475569' }}>
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-black text-white">Envoyer une notification v2</h1>
+        <h1 className="text-xl font-black text-white">Envoyer une notification</h1>
       </div>
 
       <div className="space-y-4">
